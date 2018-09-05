@@ -18,7 +18,7 @@ bot.start(ctx => {
         ctx.reply("Hello!!\nDealer address: "+doc,Markup.inlineKeyboard([
           Markup.callbackButton("Buy Car 🚘💰","buy"),
           Markup.callbackButton("Add","add"),
-          Markup.callbackButton("Check B","balance"),
+          Markup.callbackButton("Balance","balance"),
         ]).extra())})
   })
 const currencyConverter = new WizardScene(
@@ -29,7 +29,6 @@ const currencyConverter = new WizardScene(
     },ctx=>{ctx.wizard.state.currencySource = []
             ctx.wizard.state.currencySource.push(ctx.message.text)
             ctx.reply("Please Enter a car Mark");
-            console.log(ctx.wizard.state.currencySource)
             return ctx.wizard.next();
         },ctx=>{
             ctx.wizard.state.currencySource.push(ctx.message.text)
@@ -44,20 +43,33 @@ const currencyConverter = new WizardScene(
             return ctx.scene.leave();
     }
 )
-    
+
 bot.action("NO",(ctx)=>{
     instance.methods.carDealer().call({from:web3.eth.accounts[2]},(err,doc)=>{
         if(err) throw err;
-        ctx.reply("Okay)TryAgain!!!\nDealer address: "+doc,Markup.inlineKeyboard([
+        ctx.reply("Okay)TryAgain!!!\nDealer address: "+doc, Markup.inlineKeyboard([
           Markup.callbackButton("Buy Car 🚘💰","buy"),
           Markup.callbackButton("Add","add"),
-          Markup.callbackButton("Check B","balance"),
+          Markup.callbackButton("Balance","balance"),
         ]).extra())})
 })
+
 bot.action("YES",(ctx)=>{
     ctx.reply("Commin soon")
 })
+bot.action("balance",(ctx)=>{
+    ctx.reply("sad", Markup.inlineKeyboard([
+        Markup.callbackButton("Back","NO"),
+        Markup.callbackButton("ACC","Acc")]).extra())
+})
 
+bot.action("Acc",(ctx)=>{
+    ctx.reply("Comming soon...")
+})
+
+bot.action("buy",(ctx)=>{
+    ctx.reply("Comming soon")
+})
 
 const stage = new Stage([currencyConverter], { default: "add" });
 bot.use(session());
