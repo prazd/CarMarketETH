@@ -8,7 +8,7 @@ contractAddress = require("./contractData").CONTRACT_ADDRESS
 
 const Web3 = require('web3')
 
-const bot = new Telegraf('698889455:AAFs9dV1_yv95MP87-o5bmck_y4KKKoZ30w')
+const bot = new Telegraf('bot token')
 var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 const instance = new web3.eth.Contract(abi, contractAddress);
 
