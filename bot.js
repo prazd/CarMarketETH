@@ -88,26 +88,28 @@ const currencyConverter = new WizardScene(
                         petrolConsumptionPerMile:Number(ctx.wizard.state.currencySource[4]),
                         signature:web3.utils.keccak256(web3.utils.stringToHex(ctx.wizard.state.currencySource[5])),
                         presence:Boolean(ctx.wizard.state.currencySource[5])
-                    }             
-
-                   instance.methods.addCar(
-                    car.price,
-                    car.manufacturer,
-                    car.model,
-                    car.config,
-                    car.petrolConsumptionPerMile,
-                    car.signature,
-                    car.presence
-
-                ).send({from: "0x17453da352A2Fd277b5A1c2eaCBA8E3b4EBbda77", gas: 99999999999, gasPrice: 9999})
-                    .on('transactionHash', function(hash){
-                    ctx.reply(`Tx Hash: ${hash}`)
-                    })
-                    .on('receipt', function(receipt){
-                        ctx.reply(`Car Dealer: ${receipt.events.AddCar.returnValues.carDealer}`);
-                        ctx.reply(`Car ID: ${receipt.events.AddCar.returnValues.carID}`);
-                    })
-                    .on('error', console.error, + 123);
+                    }
+                    instance.methods.carDealer().call({from:web3.eth.accounts[2]},(err,doc)=>{
+                        if(err) throw err;
+                        instance.methods.addCar(
+                            car.price,
+                            car.manufacturer,
+                            car.model,
+                            car.config,
+                            car.petrolConsumptionPerMile,
+                            car.signature,
+                            car.presence
+        
+                        ).send({from:doc, gas: 99999999999, gasPrice: 9999})
+                            .on('transactionHash', function(hash){
+                            ctx.reply(`Tx Hash: ${hash}`)
+                            })
+                            .on('receipt', function(receipt){
+                                ctx.reply(`Car Dealer: ${receipt.events.AddCar.returnValues.carDealer}`);
+                                ctx.reply(`Car ID: ${receipt.events.AddCar.returnValues.carID}`);
+                            })
+                            .on('error', console.error);
+                })
                  } else {
                     ctx.reply("Okay)TryAgain!!!\nDealer address: "+doc, menuKeyboard)
             }
