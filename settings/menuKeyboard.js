@@ -1,7 +1,12 @@
 const Markup = require("telegraf/markup"),
     menuKeyboard = Markup.inlineKeyboard([
-       Markup.callbackButton("Add🚘","add"),
-       Markup.callbackButton("Balance💰","balance"),
-       Markup.callbackButton("Buy🚘💰","buy"),
+       Markup.callbackButton("🚘","add"),
+       Markup.callbackButton("💰","balance"),
+       Markup.callbackButton("🚘💰","buy"),
+       Markup.callbackButton("CarQ","cq"),
+       Markup.callbackButton("CInfo","info")
      ]).extra()
 module.exports.menuKeyboard = menuKeyboard
+
+
+
