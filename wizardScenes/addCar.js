@@ -1,8 +1,10 @@
-const instance = require('../settings/web3').instance,
-      web3 = require('../settings/web3').web3,
-      menuKeyboard = require('../settings/menuKeyboard').menuKeyboard,
+const instance = require('../web3/web3').instance,
+      menuKeyboard = require('../keyboards/menuKeyboard').menuKeyboard,
       WizardScene = require("telegraf/scenes/wizard"),
-      Telegraf = require("telegraf");
+      web3 = require('../web3/web3').web3,
+      Telegraf = require("telegraf"),
+      AddCar = require('../web3/botActions').AddCar,
+      No = require('../web3/botActions').ForNoAnswer
 
         
 const addCar = new WizardScene(
@@ -70,7 +72,6 @@ const addCar = new WizardScene(
             })
 
             }else if(ctx.message.text==="YES") {
-
                     let car = {
                         price:Number(ctx.wizard.state.addSource[0]),
                         manufacturer:ctx.wizard.state.addSource[1],
@@ -80,34 +81,16 @@ const addCar = new WizardScene(
                         signature:web3.utils.keccak256(web3.utils.stringToHex(ctx.wizard.state.addSource[5])),
                         presence:Boolean(ctx.wizard.state.addSource[6])
                     }
-                    
-                    instance.methods.carDealer().call({from:web3.eth.accounts[2]},(err,doc)=>{
-                        if(err) throw err;
-                        instance.methods.addCar(
-                            car.price,
-                            car.manufacturer,
-                            car.model,
-                            car.config,
-                            car.petrolConsumptionPerMile,
-                            car.signature,
-                            car.presence
-        
-                        ).send({from: doc, gas: 99999999999, gasPrice: ctx.wizard.state.addSource[7]})
-                            .on('transactionHash', function(hash){
-                            ctx.reply(`Tx Hash: ${hash}`)
-                            })
-                            .on('receipt', function(receipt){
-                                ctx.reply(`Car Dealer: ${receipt.events.AddCar.returnValues.carDealer}`);
-                                ctx.reply(`Car ID: ${receipt.events.AddCar.returnValues.carID}`);
-                                ctx.reply("Car was add succesfull", menuKeyboard)
-                            })
-                            .on('error', console.error);
-                })
+
+                   AddCar(ctx,car); 
+
                  } else {
-                 instance.methods.carDealer().call({from:web3.eth.accounts[2]},(err,doc)=>{
-                 if(err) throw err;
-                 ctx.reply("Try again!!\nDealer address: " + doc, menuKeyboard)
-                })
-            }
-            return ctx.scene.leave();})
-module.exports.addCar = addCar
+                   No(ctx);
+                }
+              return ctx.scene.leave();
+})
+
+
+module.exports = {
+    addCar:addCar
+}

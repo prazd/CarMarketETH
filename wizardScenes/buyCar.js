@@ -1,6 +1,8 @@
-const instance = require('../settings/web3').instance,
-      menuKeyboard = require('../settings/menuKeyboard').menuKeyboard,
-      WizardScene = require("telegraf/scenes/wizard");
+const instance = require('../web3/web3').instance,
+      menuKeyboard = require('../keyboards/menuKeyboard').menuKeyboard,
+      WizardScene = require("telegraf/scenes/wizard"),
+      BuyCar = require('../web3/botActions').BuyCar,
+      No = require('../web3/botActions').ForNoAnswer
 
 const buyCar = new WizardScene(
     "buyCar", ctx=> {
@@ -31,27 +33,14 @@ const buyCar = new WizardScene(
     },
     ctx=>{
         if(ctx.message.text=="YES"){
-
-                instance.methods.buyCar(Number(ctx.session.id)).send({from:ctx.session.key, value: Number(ctx.session.value), gas: 9999999999, gasPrice: ctx.session.gasPrice})
-                .on('transactionHash', function(hash){
-                    ctx.reply(`TX Hash: ${hash}`);
-                })
-                .on('receipt', function(receipt){
-                    ctx.reply(`Car ID: ${receipt.events.BuyCar.returnValues.carID}`);
-                    ctx.reply(`Car owner ID: ${receipt.events.BuyCar.returnValues.carOwnerID}`);
-                    if (receipt.events.NewCarOwner) {
-                        ctx.reply(`Car owner address: ${receipt.events.NewCarOwner.returnValues.carOwnerAddress}`);
-                    }
-                    ctx.reply("Nice trade)",menuKeyboard)
-                })
-                .on('error', console.error);
+            BuyCar(ctx);
         }else if(ctx.message.text=="NO"){
-            ctx.reply(
-                "Okay)\n", menuKeyboard
-        )
+            No(ctx);
         }
     ctx.scene.leave()
     }
 )
 
-module.exports.buyCar = buyCar
+module.exports = {
+    buyCar:buyCar
+}
