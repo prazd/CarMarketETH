@@ -1,7 +1,7 @@
 const Telegraf = require("telegraf"),
       Stage = require("telegraf/stage"),
       session = require("telegraf/session"),
-      bot = new Telegraf(process.env("token")),
+      bot = new Telegraf(process.env.token),
       addCar = require('./wizardScenes/addCar').addCar,
       buyCar = require('./wizardScenes/buyCar').buyCar,
       carInfo = require('./wizardScenes/carInfo').carInfo,
